@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --color-primary:#a5b1bd;
+    --color-secondary:#627689;
+    --color-bg: #f2f2f2;
+
+    --font-primary: "Roboto", sans-serif;
+    --font-secondary: "Inter", sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--color-bg);
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    padding: 40px 24px;
+    text-align: center;
+
+    h1 {
+        color: #000;
+        font-size: 2rem;
+        font-family: var(--font-secondary);
+        letter-spacing: 4px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+}
+
+.container {
+    background: var(--color-primary);
+    flex: 1;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+table {
+    width: 100%;
+    max-width: 960px;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+
+    thead {
+        background: var(--color-secondary);
+        font-family: var(--font-secondary);
+        color: #fff;
+
+        th {
+            padding: 14px 16px;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            vertical-align: middle;
+            font-size: 12px;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid #e8ecef;
+            font-family: var(--font-secondary);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        tr:nth-child(even) {
+            background: #edf2f7;
+        }
+
+        td {
+            padding: 12px 16px;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    tfoot {
+    background: #edf0f3;
+    border-top: 2px solid var(--color-primary);
+
+        td {
+            padding: 10px 16px;
+            vertical-align: middle;
+        }
+    }
+
+    thead th:nth-child(4),
+    thead th:nth-child(5),
+    tbody td:nth-child(4),
+    tbody td:nth-child(5),
+    tfoot td:nth-child(4),
+    tfoot td:nth-child(5) {
+        min-width: 80px;
+    }
+}
+
+footer {
+    background: var(--color-secondary);
+    padding: 16px;
+
+    p {
+        text-align: center;
+        font-size: 12px;
+        color: #fff;
+        opacity: 70%;
+        font-family: var(--font-secondary);
+    }
+}
+
