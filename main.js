@@ -1,14 +1,12 @@
 const url = 'https://apidemo.geoeducacion.com.ar/api/testing/encuesta/1'
 const objects = [] //Arreglo global que guarda los objetos cargados, para accederlos por indice
 
-// Cuando la pagina termina de cargar, oculta el popUp y carga la tabla
 window.onload = function() {
     getObjects()
 }
 // Promises //
 
 // Realiza un GET a la API y devuelve todos los objetos
-/* Load Object */
 function loadObjects() {
     return fetch(url, {
         method: 'GET',
@@ -32,39 +30,25 @@ function loadObjects() {
 function getObjects() {
     loadObjects()
         .then(response => {
-            console.log(response)
             var tbody = document.querySelector('#tbody')
-            tbody.innerHTML = '' // Limpia la tabla antes de recargar
-            objects.length = 0 // Limpia el array global para evitar duplicados
+            tbody.innerHTML = '' 
+            objects.length = 0 
 
             var data = Array.isArray(response) ? response : (response.data || [])
-            console.log(data[0])
 
             data.forEach(function (object) {
                 objects.push(object)
                 insertTr(object, objects.length - 1)
             })
-
-            showAgeMedia(data)
+            showFrecuenciaNivel(data)
+            showFrecuenciaCurso(data)
+            showEstadisticos(data)
         })
         .catch(function (reason) {
             console.error(reason)
             document.querySelector('#tbody').innerHTML =
-                '<tr><td colspan="9">Error al cargar los datos.</td></tr>'
+                '<tr><td colspan="6">Error al cargar los datos.</td></tr>'
         })
-}
-
-function showAgeMedia(data) {
-    var sum = data.reduce(function (acc, object) {
-        return acc + (object.Edad ?? 0)
-    }, 0)
-    var media = Math.round(sum / data.length)
-
-    document.querySelector('tfoot').innerHTML = `
-        <tr>
-            <td colspan="9">Media de edad: ${media} años</td>
-        </tr>
-    `
 }
 
 function insertTr(object, index) {
@@ -75,14 +59,171 @@ function insertTr(object, index) {
         <td>${object.nombre}</td>
         <td>${object.apellido}</td>
         <td>${object.Edad}</td>
-        <td>${object.id_curso}</td>
         <td>${object.curso}</td>
-        <td>${object.id_nivel}</td>
         <td>${object.nivel}</td>
     `
     tbody.appendChild(tr)
 }
 
+function showFrecuenciaNivel(data) {
+    const frecuencias = {}
+
+    data.forEach(obj => {
+
+        var nivel = obj.nivel
+        frecuencias[nivel] = (frecuencias[nivel] || 0) + 1 
+    })
+
+    var tbody = document.querySelector('#tbodyFrecuenciaNivel')
+    tbody.innerHTML = ''
+    var acumulada = 0
+
+    for (let nivel in frecuencias) {
+        acumulada += frecuencias[nivel]
+        var relativa = ((frecuencias[nivel] / data.length) * 100).toFixed(2)
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${nivel}</td>
+                <td>${frecuencias[nivel]}</td>
+                <td>${acumulada}</td>
+                <td>${relativa}%</td>
+            </tr>
+        `
+    }
+}
+
+//frecuencia 
+function showFrecuenciaCurso(data) {
+    const secundario = data.filter(obj => obj.nivel === 'Secundario')
+    const frecuencias = {}
+
+    secundario.forEach(obj => {
+        var curso = obj.curso
+        frecuencias[curso] = (frecuencias[curso] || 0) + 1
+    })
+
+    var tbody = document.querySelector('#tbodyFrecuenciaCurso')
+
+    tbody.innerHTML = ''
+
+    var acumulada = 0
+
+    for (var curso in frecuencias) {
+
+        acumulada += frecuencias[curso]
+
+        var relativa = ((frecuencias[curso] / secundario.length) * 100).toFixed(2)
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${curso}</td>
+                <td>${frecuencias[curso]}</td>
+                <td>${acumulada}</td>
+                <td>${relativa}%</td>
+            </tr>
+        `
+    }
+}
+
+// Calcula el cuatril 
+function calcularCuatril(edadesOrdenadas, p) {
+    const n = edadesOrdenadas.length
+    if (n === 0) return 0
+
+    const posicion = p * (n - 1)
+    const indiceInferior = Math.floor(posicion)
+    const indiceSuperior = Math.ceil(posicion)
+
+    if (indiceInferior === indiceSuperior) {
+        return edadesOrdenadas[indiceInferior]
+    }
+
+    const fraccion = posicion - indiceInferior
+    const valorInferior = edadesOrdenadas[indiceInferior]
+    const valorSuperior = edadesOrdenadas[indiceSuperior]
+    return valorInferior + fraccion * (valorSuperior - valorInferior)
+}
+
+function showEstadisticos(data) {
+
+    var edades = data.map(obj => Number(obj.Edad)).filter(e => !isNaN(e)).sort((a, b) => a - b)
+    const n = edades.length
+
+    // MEDIA
+    var suma = 0
+    for (var i = 0; i < n; i++) {
+        suma += edades[i]
+    }
+    var mediaNum = suma / n
+    var media = mediaNum.toFixed(2)
+
+    // MEDIANA
+    var mediana
+    var mitad = Math.floor(n / 2)
+
+    if (n % 2 === 0) {
+        mediana = ((edades[mitad - 1] + edades[mitad]) / 2).toFixed(2)
+    } else {
+        mediana = edades[mitad].toFixed(2)
+    }
+
+    // MAXIMO / MINIMO
+    var maximo = edades[n - 1]
+    var minimo = edades[0]
+    
+    // CUARTILES
+    var q1 = calcularCuatril(edades, 0.25).toFixed(2)
+
+    var q2 = calcularCuatril(edades, 0.50).toFixed(2)
+
+    // DESVIO ESTANDAR
+    var sumaCuadrados = 0
+    for (var i = 0; i < n; i++) {
+        sumaCuadrados += (edades[i] - mediaNum) ** 2
+    }
+    var varianza = sumaCuadrados / n
+    var desvio = Math.sqrt(varianza).toFixed(2)
+
+    var tbody = document.querySelector('#tbodyEstadisticos')
+
+    tbody.innerHTML = `
+        <tr>
+            <td>Media</td>
+            <td>${media}</td>
+        </tr>
+
+        <tr>
+            <td>Mediana</td>
+            <td>${mediana}</td>
+        </tr>
+
+        <tr>
+            <td>Máximo</td>
+            <td>${maximo}</td>
+        </tr>
+
+        <tr>
+            <td>Mínimo</td>
+            <td>${minimo}</td>
+        </tr>
+
+        <tr>
+            <td>Primer Cuartil</td>
+            <td>${q1}</td>
+        </tr>
+
+        <tr>
+            <td>Segundo Cuartil</td>
+            <td>${q2}</td>
+        </tr>
+
+        <tr>
+            <td>Desvío estándar</td>
+            <td>${desvio}</td>
+        </tr>
+    `
+}
 
 
 

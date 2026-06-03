@@ -1,39 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/styles.css">
     <link rel='stylesheet' href='https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css'>
-    <script src='https://code.jquery.com/jquery-1.12.4.js'></script>
-    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.js'></script>
-    <title>TP Entregable</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Estadística y Probabilidades</title>
 </head>
 <body>
     <header>
-        <h1>TP - Consulta a API</h1>
+        <h1>Estadística y Probabilidades</h1>
     </header>
-    
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>NOMBRE</th>
-                    <th>APELLIDO</th>
-                    <th>EDAD</th>
-                    <th>ID CURSO</th>
-                    <th>CURSO</th>
-                    <th>ID NIVEL</th>
-                    <th>NIVEL</th>
-                </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-            <tfoot>
-            </tfoot>
-        </table>    
-    </div>
+    <div class="main-content">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link active"
+                    data-bs-toggle="tab"
+                    data-bs-target="#poblacion">
+                    Población completa
+                </button>
+            </li>
 
+            <li class="nav-item">
+                <button class="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#frecuencias">
+                    Tablas de frecuencia
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button class="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#estadisticos">
+                    Estadísticos
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <!--POBLACION-->
+        <div class="tab-pane fade show active" id="poblacion">
+            <div class="container">
+            <h3>Poblacion Completa</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>NOMBRE</th>
+                        <th>APELLIDO</th>
+                        <th>EDAD</th>
+                        <th>CURSO</th>
+                        <th>NIVEL</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+                </table>   
+            </div>
+        </div> 
+        <!--FRECUENCIAS-->
+        <div class="tab-pane fade" id="frecuencias">
+            <div class="container">
+                <h3>Frecuencia por Nivel</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nivel</th>
+                            <th>Frecuencia</th>
+                            <th>Acumulada</th>
+                            <th>Relativa </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyFrecuenciaNivel"></tbody>
+                </table>
+                <br>
+                <h3>Frecuencia por curso</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Frecuencia</th>
+                            <th>Acumulada</th>
+                            <th>Relativa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyFrecuenciaCurso"></tbody>
+                </table>
+            </div>
+        </div>
+        <!--ESTADISTICOS-->
+        <div class="tab-pane fade" id="estadisticos">
+            <div class="container">
+                <h3>Estadisticos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estadísticos</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyEstadisticos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>© 2026 All Rights Reserved | Matias Rosas, Camila Larsen & Matias Nerli.</p>
+    </footer>
     <script src="./main.js"></script>
 </body>
 </html>
